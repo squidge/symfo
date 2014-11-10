@@ -15,7 +15,7 @@ class Core implements HttpKernelInterface
         // Does this URL match a route?
         if (array_key_exists($path, $this->routes)) {
             // execute the callback
-            $controller = $routes[$path];
+            $controller = $this->routes[$path];
             $response = $controller();
         } else {
             // no route matched, this is a not found.

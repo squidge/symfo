@@ -1,6 +1,7 @@
 <?php
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Mercury\Core;
 
 $loader = require 'vendor/autoload.php';
@@ -8,7 +9,6 @@ $loader->register();
 
 $request = Request::createFromGlobals();
 
-// Our framework is now handling itself the request
 $app = new Core();
 
 $app->map('/', function () {
