@@ -3,6 +3,7 @@
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Mercury\Core;
+use Mercury\RequestEvent;
 
 $loader = require 'vendor/autoload.php';
 $loader->register();
@@ -21,6 +22,10 @@ $app->map('/about', function () {
 
 $app->map('/hello/{name}', function ($name) {
     return new Response('Hello '.$name);
+});
+
+$app->on('request', function (RequestEvent $event) {
+    echo 'eccome ';
 });
 
 $response = $app->handle($request);

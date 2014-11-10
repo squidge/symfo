@@ -8,6 +8,7 @@ use Symfony\Component\Routing\RequestContext;
 use Symfony\Component\Routing\RouteCollection;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\Exception\ResourceNotFoundException;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class Core implements HttpKernelInterface
 {
@@ -17,10 +18,26 @@ class Core implements HttpKernelInterface
     public function __construct()
     {
         $this->routes = new RouteCollection();
+        $this->dispatcher = new EventDispatcher();
+    }
+
+    public function on($event, $callback)
+    {
+        $this->dispatcher->addListener($event, $callback);
+    }
+
+    public function fire($event)
+    {
+        return $this->dispatcher->dispatch($event);
     }
 
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
     {
+        $event = new RequestEvent();
+        $event->setRequest($request);
+
+        $this->dispatcher->dispatch('request', $event);
+
         // create a context using the current request
         $context = new RequestContext();
         $context->fromRequest($request);
