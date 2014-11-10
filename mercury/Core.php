@@ -6,21 +6,27 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class Core implements HttpKernelInterface
 {
+    protected $routes = array();
+
     public function handle(Request $request, $type = HttpKernelInterface::MASTER_REQUEST, $catch = true)
     {
-        switch ($request->getPathInfo()) {
-            case '/':
-                $response = new Response('This is the website home');
-                break;
+        $path = $request->getPathInfo();
 
-            case '/about':
-                $response = new Response('This is the about page');
-                break;
-
-            default:
-                $response = new Response('Not found !', Response::HTTP_NOT_FOUND);
+        // Does this URL match a route?
+        if (array_key_exists($path, $this->routes)) {
+            // execute the callback
+            $controller = $routes[$path];
+            $response = $controller();
+        } else {
+            // no route matched, this is a not found.
+            $response = new Response('Not found!', Response::HTTP_NOT_FOUND);
         }
 
         return $response;
+    }
+
+    // Associates an URL with a callback function
+    public function map($path, $controller) {
+        $this->routes[$path] = $controller;
     }
 }
